@@ -1,0 +1,204 @@
+using UnityEngine;
+using System.Collections.Generic;
+
+public class LanguageManager : MonoBehaviour
+{
+    public static LanguageManager Instance;
+    public Dictionary<string, string> localizedText = new Dictionary<string, string>();
+    public string currentLanguage = "using UnityEngine;
+
+public class AdminPanel : MonoBehaviour
+{
+    public static AdminPanel Instance;
+    public GameObject panel;
+
+    void Awake()
+    {
+        if (Instance == null) Instance = this;
+        panel.SetActive(false);
+    }
+
+    public void ShowPanel()
+    {
+        panel.SetActive(true);
+        Debug.Log("Admin Panel Açıldı!");
+    }
+
+    public void HidePanel()
+    {
+        panel.SetActive(false);
+    }
+}using UnityEngine;
+using UnityEngine.UI;
+
+public class LoginManager : MonoBehaviour
+{
+    public InputField usernameInput;
+    public InputField passwordInput;
+    public Button loginButton;
+    public Text messageText;
+
+    void Start()
+    {
+        loginButton.onClick.AddListener(HandleLogin);
+    }
+
+    void HandleLogin()
+    {
+        string username = usernameInput.text;
+        string password = passwordInput.text;
+
+        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+        {
+            messageText.text = "Lütfen kullanıcı adı ve şifre girin.";
+            return;
+        }
+
+        if (username == "ADMİN" && password == "12345") // Örnek şifre – değiştir
+        {
+            messageText.text = "ADMİN olarak giriş yapıldı.";
+            AdminPanel.Instance.ShowPanel();
+        }
+        else
+        {
+            messageText.text = username + " olarak giriş yapıldı. [VİPO]";
+            VIPBadge.Instance.SetPlayerName(username, true);
+            FirebaseManager.Instance.RegisterUser(username);
+        }
+    }
+}TurkSkyBlock/
+├── Assets/
+│   ├── Scenes/
+│   │   └── LoginScene.unity          ← Unity’de File ▸ Save Scene As… ile kaydedin
+│   ├── Scripts/
+│   │   ├── LoginManager.cs
+│   │   ├── AdminPanel.cs
+│   │   ├── LanguageManager.cs
+│   │   ├── VIPBadge.cs
+│   │   └── FirebaseManager.cs
+│   ├── Resources/
+│   │   └── Localization/
+│   │       ├── tr.json
+│   │       └── en.json
+├── Packages/
+│   └── manifest.json                 ← Firebase paket referansları örneği
+└── README.md# Türk Sky Block - Unity Projesi
+
+## Kullanıcılar:
+- Girişte kullanıcı adı ve şifre girer
+- Eğer "ADMİN" ve "12345" girilirse Admin Paneli açılır
+- Diğer oyuncular giriş yapınca adları "[VİPO]" olarak etiketlenir
+
+## Panelde Neler Olacak?
+- Ban Sistemi
+- Küp Para Verme
+- SkyBlock Parası Ayarı
+- Envanter Kontrol
+
+## Dil Seçimi
+- Türkçe ve İngilizce desteği var (LanguageManager.cs){
+  "login_button": "Giriş Yap",
+  "vip_title": "VİPO",
+  "admin_text": "ADMİN olarak giriş yapıldı"
+}using UnityEngine;
+using System.Collections.Generic;
+
+public class LanguageManager : MonoBehaviour
+{
+    public static LanguageManager Instance;
+    public Dictionary<string, string> localizedText = new Dictionary<string, string>();
+
+    public string currentLanguage = "tr";
+
+    void Awake()
+    {
+        if (Instance == null) Instance = this;
+        LoadLanguage(currentLanguage);
+    }
+
+    public void LoadLanguage(string lang)
+    {
+        currentLanguage = lang;
+
+        localizedText.Clear();
+        if (lang == "tr")
+        {
+            localizedText.Add("login_button", "Giriş Yap");
+            localizedText.Add("vip_title", "VİPO");
+        }
+        else
+        {
+            localizedText.Add("login_button", "Login");
+            localizedText.Add("vip_title", "VIP");
+        }
+    }
+
+    public string GetText(string key)
+    {
+        if (localizedText.ContainsKey(key))
+            return localizedText[key];
+        return key;
+    }
+}using UnityEngine;
+
+public class AdminPanel : MonoBehaviour
+{
+    public static AdminPanel Instance;
+    public GameObject panel;
+
+    void Awake()
+    {
+        if (Instance == null) Instance = this;
+        panel.SetActive(false);
+    }
+
+    public void ShowPanel()
+    {
+        panel.SetActive(true);
+        Debug.Log("Admin Panel Açıldı!");
+    }
+
+    public void HidePanel()
+    {
+        panel.SetActive(false);
+    }
+
+    // Buraya GC verme, envanter kontrolü, no-ban gibi fonksiyonlar eklenecek
+}using UnityEngine;
+using UnityEngine.UI;
+
+public class LoginManager : MonoBehaviour
+{
+    public InputField usernameInput;
+    public InputField passwordInput;
+    public Button loginButton;
+    public Text messageText;
+
+    void Start()
+    {
+        loginButton.onClick.AddListener(HandleLogin);
+    }
+
+    void HandleLogin()
+    {
+        string username = usernameInput.text;
+        string password = passwordInput.text;
+
+        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+        {
+            messageText.text = "Lütfen kullanıcı adı ve şifre girin.";
+            return;
+        }
+
+        if (username == "ADMİN" && password == "12345") // Değiştirilebilir
+        {
+            messageText.text = "ADMİN olarak giriş yapıldı.";
+            AdminPanel.Instance.ShowPanel();
+        }
+        else
+        {
+            messageText.text = username + " olarak giriş yapıldı. [VİPO]";
+            // Oyuncu kayıt veritabanına eklenebilir
+        }
+    }
+}
